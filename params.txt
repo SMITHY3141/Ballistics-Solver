@@ -1,0 +1,24 @@
+// Initial conditions
+
+// projectile launch speed in m/s
+speed: 900
+
+// projectile drag coeff (v[n] = v[n-1] * (1 - drag))
+drag: 0.001
+
+// target relative position
+x: 100
+y: 100
+z: 100
+
+// target velocity
+vx: 0
+vy: 0
+vz: 0
+
+// max iterations
+max: 20
+
+// desired error (will end iterations early)
+desired: 0
+
