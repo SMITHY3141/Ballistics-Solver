@@ -35,8 +35,10 @@ namespace blstc {
     std::ostream& operator<<(std::ostream& os, const Solution &s);
 
     Solution solve(const Conditions &c);
-    //Matrix<3, 3> jacobian();
-    //Vector<3> error(float azimuth, float elevation, float time);
+    Matrix<3, 3> jacobian(const Vector<3> &state, const Conditions &c);
+    Vector<3> error(const Vector<3> &vars, const Conditions &c); // azimuth, elevation, time_to_reach
+
+
 
 }
 

@@ -30,11 +30,18 @@ namespace blstc {
     Solution solve(const Conditions &c) {
         Solution s;
 
+
         return s;
 
     }
 
 
-    //Matrix<3, 3> ballistics
+    Matrix<3, 3> jacobian(Vector<3> &state, const Conditions &c) {
+       
+        
+    }
 
+    Vector<3> error(Vector<3> &vars, const Conditions &c) {
+
+    }
 }
