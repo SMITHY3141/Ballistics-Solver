@@ -1,6 +1,6 @@
 
 #include "parser.hpp"
-#include "setup.hpp"
+#include "ballistics.hpp"
 #include <iostream>
 #include <fstream>
 
@@ -50,8 +50,8 @@ std::array<std::string, 2> strip_past_colon(const std::string& line) {
 }
 
 
-Conditions parse_params(char *save_path) {
-    Conditions conditions;
+blstc::Conditions parse_params(char *save_path) {
+    blstc::Conditions conditions;
     
     // signature of void (*)(const std::string&)
     // [] is a capture clause, it reaches into the surrounding scope to pull variables in

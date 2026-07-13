@@ -1,16 +1,24 @@
 
 
 #include "parser.hpp"
-#include "setup.hpp"
+#include "ballistics.hpp"
 #include <iostream>
 
 int main(int argc, char **argv) {
     argc--;
     argv++;
 
+    // Get initial conditions for solve
     char* save_path = find_save(argc, argv);
-    Conditions conditions = parse_params(save_path);
-
+    blstc::Conditions conditions = parse_params(save_path);
     std::cout << conditions << '\n';
+
+
+    blstc::Solution solution = blstc::solve(conditions);
+
+    std::cout << '\n' << solution << '\n';
+
 }
+
+
 
