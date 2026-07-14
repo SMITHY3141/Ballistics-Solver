@@ -43,6 +43,9 @@ namespace blstc {
     Matrix<3, 3> jacobian(const Vector<3> &state, const Conditions &c);
     Vector<3> error(const Vector<3> &vars, const Conditions &c); // azimuth, elevation, time_to_reach
 
+    // simple guess of time to hit based on current conditions
+    // assumes target is stationary
+    float time_to_hit(float p, const Conditions &c);
 
 }
 

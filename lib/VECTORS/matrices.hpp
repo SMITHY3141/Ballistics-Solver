@@ -27,8 +27,8 @@ struct Matrix {
 template <int N, int M>
 std::ostream& operator<<(std::ostream& os, const Matrix<N, M> &m);
 
-//template <int N, int M>
-//Vector<N> operator*(Matrix<N, M>, Vector<M>);
+template <int N, int M>
+Vector<N> operator*(const Matrix<N, M> &m, const Vector<M> &v);
 
 template <int N, int M>
 Matrix<N, M> get_identity();
@@ -141,5 +141,18 @@ void swap_rows(Matrix<N, M> &m, int a, int b) {
     }
 }
 
+template <int N, int M>
+Vector<N> operator*(const Matrix<N, M> &m, const Vector<M> &v) {
+    Vector<N> result;
+    for (int i = 0; i < N; i++) {
+        float sum = 0.f;
+        for (int j = 0; j < N; j++) {
+            sum += m[i][j] * v[j];
+
+        }
+        result[i] = sum;
+    }
+    return result;
+}
 
 #endif // MATRICES_HPP

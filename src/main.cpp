@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
     // Get initial conditions for solve
     char* save_path = find_save(argc, argv);
     blstc::Conditions conditions = parse_params(save_path);
-    std::cout << conditions << '\n';
+    std::cout << '\n' << conditions << '\n' << '\n';
 
 
     blstc::Solution solution = blstc::solve(conditions);

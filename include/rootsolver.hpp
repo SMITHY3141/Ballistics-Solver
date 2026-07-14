@@ -4,64 +4,53 @@
 #ifndef ROOTSOLVER_HPP
 #define ROOTSOLVER_HPP
 
-/*
-class Solver {
-    template <int N>
-private:
-    Vector<N> state;
-    //Matrix<N, N> jacobian;
-    Vector<N> error(Vector<N> state);
-
-public:
-    Solver();
-    Solver(Vector<N>) : ;
-
-    //step(); // step using numerical jacobian
-    step(Matrix<N, N> jacobian);
-
-
-}
-*/
-
 #include <VECTORS/vectors.hpp>
 #include <VECTORS/matrices.hpp>
 
+#include <iostream>
+
 namespace solver {
+    // .hpp
     template <int N>
     using ErrorType = std::function<Vector<N>(const Vector<N>&)>;
     
     template <int N>
     using JType = std::function<Matrix<N, N>(const Vector<N>&)>;
     
-    // Vector<N> step(int n, Vector<N> state, ErrorType error_func);
-   
     template <int N>
-    Vector<N> solve(int n, const Vector<N> &state, const ErrorType<N> error_f, const JType<N> jacobian_f);
-
-    template <int N>
-    Vector<N> step(const Vector<N> &state, const Matrix<N, N> &jacobian);
-
-    // Matrix<N, N> jacobian(ErrorType error_func, float gap);
-
-
+    Vector<N> solve(int n, const Vector<N> &guess, float desired, const ErrorType<N> error_f, const JType<N> jacobian_f);
 
 
 
     // .cpp
-
     template <int N>
-    Vector<N> solve(int n, const Vector<N> &state, const ErrorType<N> error_f, const JType<N> jacobian_f) {
+    Vector<N> solve(int n, const Vector<N> &guess, float desired, const ErrorType<N> error_f, const JType<N> jacobian_f) {
+        std::cout << "SOLVING" << '\n';
+        
+        Vector<N> state = guess;
+        for (int i = 0; i < n + 1; i++) {
 
-        Vector<N> vec{0};
-        return vec;
+            Vector<N> error = error_f(state);
+            float miss = error.length();
+
+            std::cout << i << ": " << state << ", error: " << miss << '\n';
+            if (miss < desired || i == n) {
+                break;
+            }
+
+            Matrix<N, N> jacobian = jacobian_f(state);
+            Matrix<N, N> inverse = jacobian.inverse();
+            state -= inverse * error;
+
+
+        }
+
+        return state;
         
     }
 
-    template <int N>
-    Vector<N> step(const Vector<N> &state, const Matrix<N, N> &jacobian) {
-        Vector<N> vec;
-        return vec;
-    }
+    
+
 }
 
 

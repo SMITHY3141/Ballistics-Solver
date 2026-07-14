@@ -1,7 +1,7 @@
 // Initial conditions
 
 // projectile launch speed in m/s
-speed: 900
+speed: 300
 
 // projectile drag coeff (v[n] = v[n-1] * (1 - drag))
 drag: 0.001
@@ -17,7 +17,7 @@ vy: 0
 vz: 0
 
 // max iterations
-max: 20
+max: 9
 
 // desired error (will end iterations early)
 desired: 0

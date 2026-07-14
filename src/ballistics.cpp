@@ -23,19 +23,25 @@ namespace blstc {
         os << "CONDITIONS" << '\n'
            << "speed: " << c.speed << '\n'
            << "drag: "  << c.drag  << '\n'
+           << "gravity: " << c.gravity << '\n'
            << "target: (" << c.x << ", " << c.y << ", " << c.z << ")\n"
            << "velocity: (" << c.vx << ", " << c.vy << ", " << c.vz << ")\n"
            << "max: " << c.max << '\n'
            << "desired error: " << c.desired;
 
-        return os; // so we can chain together std::cout << inputs
+        return os;
     }
 
     Solution solve(const Conditions &c) {
-        Vector<3> guess{0.f, 0.f, 0.f}; // initial guess
+
+        float azimuth = std::atan2(c.y, c.x); // initial guesses
+        float elevation = std::atan2(c.z, std::sqrt(c.x * c.x + c.y * c.y));
+
+        Vector<3> guess{azimuth, elevation, time_to_hit(elevation, c)};
         Vector<3> sol = solver::solve<3>(
-                1,
-                guess, 
+                c.max,
+                guess,
+                c.desired,
                 [c](const Vector<3> &vars) -> Vector<3> { return error(vars, c); }, 
                 [c](const Vector<3> &state) -> Matrix<3, 3> { return jacobian(state, c); }
                 );
@@ -44,6 +50,9 @@ namespace blstc {
         s.azimuth = sol[0];
         s.elevation = sol[1];
         s.time = sol[2];
+
+        Vector<3> miss = error(sol, c);
+        s.error = miss.length();
 
         return s;
 
@@ -63,15 +72,15 @@ namespace blstc {
 
         float x_a = -v * std::sin(a) * std::cos(p) * (1 - exp) / d;
         float x_p = -v * std::cos(a) * std::sin(p) * (1 - exp) / d;
-        float x_t = v * std::cos(a) * std::cos(p) * exp;
+        float x_t = v * std::cos(a) * std::cos(p) * exp - c.vx;
 
         float y_a = v * std::cos(a) * std::cos(p) * (1 - exp) / d;
         float y_p = -v * std::sin(a) * std::sin(p) * (1- exp) / d;
-        float y_t = v * std::sin(a) * std::cos(p) * exp;
+        float y_t = v * std::sin(a) * std::cos(p) * exp - c.vy;
 
         float z_a = 0;
         float z_p = v * std::cos(p) * (1 - exp) / d;
-        float z_t = g * (1 - exp) + v * std::sin(p) * exp;
+        float z_t = g * (1 - exp) + v * std::sin(p) * exp - c.vz;
 
         Matrix<3, 3> jacobian{{{x_a, x_p, x_t}, {y_a, y_p, y_t}, {z_a, z_p, z_t}}};
 
@@ -84,9 +93,9 @@ namespace blstc {
         float d = c.drag;
         float v = c.speed;
 
-        float a = state[0];
-        float p = state[1];
-        float t = state[2];
+        float a = vars[0];
+        float p = vars[1];
+        float t = vars[2];
 
         float exp = std::exp(-d * t);
 
@@ -107,5 +116,11 @@ namespace blstc {
         return position - extrapolated;
 
         
+    }
+
+    float time_to_hit(float p, const Conditions &c) {
+        float distance = std::sqrt(c.x * c.x + c.y * c.y);
+        float log = std::log(1 - distance * c.drag / c.speed / std::cos(p));
+        return - log / c.drag;
     }
 }
