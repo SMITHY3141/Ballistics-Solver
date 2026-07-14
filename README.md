@@ -10,8 +10,8 @@ Factors in gravity, target velocity, target position, projectile speed, and drag
 The solver makes use of explicit analytical equations for projectile position, but it could also be solved numerically.
 
 Won't go into the full derivation, but an explicit solution for projectile position can be found by laplace transform.
-Giving:
-$s_{x}\left(a,\ p,\ t\right)=\ \frac{v_{0}\cos\left(a\right)\cos\left(p\right)}{d}\left(1-e^{-dt}\right)$ 
+Giving: 
+$s_{x}\left(a,\ p,\ t\right)=\ \frac{v_{0}\cos\left(a\right)\cos\left(p\right)}{d}\left(1-e^{-dt}\right)$  
 $s_{y}\left(a,\ p,\ t\right)=\frac{v_{0}\sin\left(a\right)\cos\left(p\right)}{d}\left(1-e^{-dt}\right)$ 
 $s_{z}\left(a,\ p,\ t\right)=\frac{g}{d}\left(\frac{e^{-dt}}{d}+t-\frac{1}{d}\right)+\frac{v_{0}\sin\left(p\right)}{d}\left(1-e^{-dt}\right)$  
 
