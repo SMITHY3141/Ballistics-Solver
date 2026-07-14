@@ -7,9 +7,9 @@ CFLAGS = -Wall -Wextra --std=c++17 -Iinclude -Ilib
 #	(already the default)
 
 
-LDFLAGS = -Llib/Vectors
+LDFLAGS = 
 #-L is for finding static/dynamic library directory for linking (after compilation)
-LDLIBS = -lvectors
+LDLIBS = 
 #still don't know which library file we want specifically, one header might be
 #	implemented by several different libraries
 #static libraries are essentially a collection of object files, the linker will

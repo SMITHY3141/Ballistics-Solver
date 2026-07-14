@@ -4,6 +4,9 @@
 #define BALLISTICS_HPP
 
 #include <iostream>
+#include <VECTORS/vectors.hpp>
+#include <VECTORS/matrices.hpp>
+
 
 namespace blstc {
     struct Conditions {
@@ -21,6 +24,7 @@ namespace blstc {
         int max = 15; ///< max number of iterations in solver
         float desired = 0.f; ///< desired error (will stop solver early if reached)
 
+        float gravity = -9.8f;
     };
 
     struct Solution {
@@ -35,9 +39,9 @@ namespace blstc {
     std::ostream& operator<<(std::ostream& os, const Solution &s);
 
     Solution solve(const Conditions &c);
+
     Matrix<3, 3> jacobian(const Vector<3> &state, const Conditions &c);
     Vector<3> error(const Vector<3> &vars, const Conditions &c); // azimuth, elevation, time_to_reach
-
 
 
 }

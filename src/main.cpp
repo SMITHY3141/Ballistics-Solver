@@ -2,6 +2,8 @@
 
 #include "parser.hpp"
 #include "ballistics.hpp"
+#include <VECTORS/vectors.hpp>
+#include <VECTORS/matrices.hpp>
 #include <iostream>
 
 int main(int argc, char **argv) {

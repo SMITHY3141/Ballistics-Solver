@@ -22,3 +22,8 @@ max: 20
 // desired error (will end iterations early)
 desired: 0
 
+// projectile model time step
+dt = 0.01666
+
+gravity = -9.8
+

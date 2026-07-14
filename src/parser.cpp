@@ -58,16 +58,17 @@ blstc::Conditions parse_params(char *save_path) {
     // [&] is used in the lambda, it reaches into the surrounding scope so we can use them by reference
     // [=] to capture by value, so capturing the entire scope by value would be expensive
     std::unordered_map<std::string, std::function<void(const std::string&)>> setters = {
-        {"speed", [&](const std::string& v){conditions.speed = std::stof(v);}},
-        {"drag",  [&](const std::string& v){conditions.drag = std::stof(v);}},
-        {"x",     [&](const std::string& v){conditions.x = std::stof(v);}},
-        {"y",     [&](const std::string& v){conditions.y = std::stof(v);}},
-        {"z",     [&](const std::string& v){conditions.z = std::stof(v);}},
-        {"vx",    [&](const std::string& v){conditions.vx = std::stof(v);}},
-        {"vy",    [&](const std::string& v){conditions.vy = std::stof(v);}},
-        {"vz",    [&](const std::string& v){conditions.vz = std::stof(v);}},
-        {"max",   [&](const std::string& v){conditions.max = std::stoi(v);}},
-        {"desired", [&](const std::string& v){conditions.desired = std::stof(v);}}
+        {"speed", [&](const std::string &v){conditions.speed = std::stof(v);}},
+        {"drag", [&](const std::string &v){conditions.drag = std::stof(v);}},
+        {"x", [&](const std::string &v){conditions.x = std::stof(v);}},
+        {"y", [&](const std::string &v){conditions.y = std::stof(v);}},
+        {"z", [&](const std::string &v){conditions.z = std::stof(v);}},
+        {"vx", [&](const std::string &v){conditions.vx = std::stof(v);}},
+        {"vy", [&](const std::string &v){conditions.vy = std::stof(v);}},
+        {"vz", [&](const std::string &v){conditions.vz = std::stof(v);}},
+        {"max", [&](const std::string &v){conditions.max = std::stoi(v);}},
+        {"desired", [&](const std::string &v){conditions.desired = std::stof(v);}},
+        {"gravity", [&](const std::string &v){conditions.gravity = std::stof(v);}}
     };
 
     //ifstream as in input fstream, there's also ofstream
