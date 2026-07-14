@@ -1,26 +1,26 @@
 # Ballistics-Solver
 
-A ballistics calculator for intercepting moving targets with linear-drag projectiles. Iteratively solves for firing conditions using a 3D newton-raphson method.
+A ballistics calculator for intercepting moving targets with linear-drag projectiles. Iteratively solves for firing conditions using a multi-dimensional newton-raphson method (to find what set of launch conditions produces zero error).
 
-Has also been implemented in desmos for a graphical view https://www.desmos.com/3d/hjwlg9oa3n
+Has also been implemented in desmos for a graphical view https://www.desmos.com/3d/5zz8pbzmjr
 
-Assumes that the drag acting on a projectile is proportional to its own velocity (i.e. v[n+1] = v[n] * (1 - drag)), and it updates discretely.
-Factors in gravity, target velocity, target position, projectile speed, linear wind, and drag.
+Assumes that the drag acting on a projectile is proportional to its own velocity (i.e. y'' = g - d * y', where g is gravity, d is drag coeff).
+Factors in gravity, target velocity, target position, projectile speed, and drag.
 
 The solver makes use of explicit analytical equations for projectile position, but it could also be solved numerically.
 
-Won't go into the full derivation, but an explicit solution for projectile position can be found by treating the velocity as a geometric sequence, and the resulting position as a geometric series.
+Won't go into the full derivation, but an explicit solution for projectile position can be found by laplace transform.
 Giving:
-b\left(t\right)=\frac{1-k^{t}}{d}
+$s_{x}\left(a,\ p,\ t\right)=\ \frac{v_{0}\cos\left(a\right)\cos\left(p\right)}{d}\left(1-e^{-dt}\right)$ 
+$s_{y}\left(a,\ p,\ t\right)=\frac{v_{0}\sin\left(a\right)\cos\left(p\right)}{d}\left(1-e^{-dt}\right)$ 
+$s_{z}\left(a,\ p,\ t\right)=\frac{g}{d}\left(\frac{e^{-dt}}{d}+t-\frac{1}{d}\right)+\frac{v_{0}\sin\left(p\right)}{d}\left(1-e^{-dt}\right)$  
 
-$s_{x}\left(a,\ p,\ t\right)=\left(b\left(t\right)\cdot v_{0}\cos\left(a\right)\cos\left(p\right)+\ w_{c}w.x\cdot\frac{t-b\left(t\right)}{d}\right)d_{t}$ 
-$s_{y}\left(a,\ p,\ t\right)=\left(b\left(t\right)\cdot v_{0}\sin\left(a\right)\cos\left(p\right)+\ w_{c}w.y\cdot\frac{t-b\left(t\right)}{d}\right)d_{t}$ 
-$s_{z}\left(a,\ p,\ t\right)=\left(b\left(t\right)\cdot v_{0}\sin\left(p\right)-0.5\frac{t-b\left(t\right)}{d}\right)d_{t}$  
+where t is the time in seconds, d is drag, a is azimuth angle, p is elevation angle, t is time after launch.
 
-where t is the time in ticks (i.e. number of velocity update steps evenly spaced $d_{t}$ apart).
+we specifically try solve for the launch condition that drives the miss vector to 0 (i.e. the root of the error vector).
+$s_{x}\left(a,\ p,\ t\right)-T_{x}\left(t\right)=0$
+$s_{y}\left(a,\ p,\ t\right)-T_{y}\left(t\right)=0$
+$s_{z}\left(a,\ p,\ t\right)-T_{z}\left(t\right)=0$
 
-From this partial derivatives of position with respect to time, azimuth, and elevation can be derived.
+From these equations partial derivatives of error with respect to time, azimuth, and elevation can be derived.
 These derivatives are used to converge on a solution in the newton-raphson solver.
-
-
-

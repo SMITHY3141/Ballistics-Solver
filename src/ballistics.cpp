@@ -65,33 +65,38 @@ namespace blstc {
         float x_p = -v * std::cos(a) * std::sin(p) * (1 - exp) / d;
         float x_t = v * std::cos(a) * std::cos(p) * exp;
 
-        float y_a = 0;
-        float y_p = v * std::cos(p) * (1 - exp) / d;
-        float y_t = g/d - exp * (g/d - v * std::sin(p));
+        float y_a = v * std::cos(a) * std::cos(p) * (1 - exp) / d;
+        float y_p = -v * std::sin(a) * std::sin(p) * (1- exp) / d;
+        float y_t = v * std::sin(a) * std::cos(p) * exp;
 
-        float z_a = v * std::cos(a) * std::cos(p) * (1 - exp) / d;
-        float z_p = -v * std::sin(a) * std::sin(p) * (1- exp) / d;
-        float z_t = v * std::sin(a) * std::cos(p) * exp;
-
+        float z_a = 0;
+        float z_p = v * std::cos(p) * (1 - exp) / d;
+        float z_t = g * (1 - exp) + v * std::sin(p) * exp;
 
         Matrix<3, 3> jacobian{{{x_a, x_p, x_t}, {y_a, y_p, y_t}, {z_a, z_p, z_t}}};
 
         return jacobian;
     }
 
+    // ppredicted rojectile position take target position
     Vector<3> error(const Vector<3> &vars, const Conditions &c) {
         float g = c.gravity;
         float d = c.drag;
-        float t = vars[2];
         float v = c.speed;
 
-        float v_x = v * std::cos(vars[0]) * std::cos(vars[1]);
-        float v_y = v * std::sin(vars[1]);
-        float v_z = v * std::sin(vars[0]) * std::cos(vars[1]);
+        float a = state[0];
+        float p = state[1];
+        float t = state[2];
 
-        float x = v_x * (1 - std::exp(-d * t)) / d;
-        float y = (g * (t - 1/d) + v_y + std::exp(-d * t) * (g/d - v_y)) / d;
-        float z = v_z * (1 - std::exp(-d * t)) / d;
+        float exp = std::exp(-d * t);
+
+        float v_x = v * std::cos(a) * std::cos(p);
+        float v_y = v * std::sin(a) * std::cos(p);
+        float v_z = v * std::sin(p);
+
+        float x = v_x * (1 - exp) / d;
+        float y = v_y * (1 - exp) / d;
+        float z = (g * (exp/d + t - 1/d) + v_z * (1 - exp)) / d ;
 
         Vector<3> position{x, y, z};
 
