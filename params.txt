@@ -4,12 +4,12 @@
 speed: 300
 
 // projectile drag coeff (v[n] = v[n-1] * (1 - drag))
-drag: 0.001
+drag: 0.05
 
 // target relative position
-x: 100
-y: 100
-z: 100
+x: 1900
+y: 500
+z: 900
 
 // target velocity
 vx: 0
@@ -22,8 +22,5 @@ max: 9
 // desired error (will end iterations early)
 desired: 0
 
-// projectile model time step
-dt = 0.01666
-
-gravity = -9.8
+gravity = -9.8 // m/s/s
 
