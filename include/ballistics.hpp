@@ -10,13 +10,13 @@
 
 namespace blstc {
     struct Conditions {
-        float speed = 0.f; ///< Projectile launch speed
-        float drag = 0.f; ///< Projectile linear drag v[n+1] = v[n] - (1-drag) * v[n]
+        float speed = 300.f; ///< Projectile launch speed
+        float drag = 0.05f; ///< Projectile linear drag v[n+1] = v[n] - (1-drag) * v[n]
 
         // target position relative to projectile starting position
-        float x = 0.f; 
-        float y = 0.f;
-        float z = 0.f;
+        float x = 1900.f; 
+        float y = 500.f;
+        float z = 900.f;
 
         // target velocity
         float vx = 0.f;

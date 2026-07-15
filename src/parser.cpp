@@ -70,6 +70,11 @@ blstc::Conditions parse_params(char *save_path) {
     };
 
     std::ifstream file(save_path);
+    if (!file) {
+        std::cerr << "FAILED TO FIND INITIAL CONDITIONS FILE: " << save_path << std::endl;
+        return conditions;
+    }
+
     std::string line;
     while (std::getline(file, line)) {
         strip_comment(line);
