@@ -24,3 +24,39 @@ $s_{z}\left(a,\ p,\ t\right)-T_{z}\left(t\right)=0$
 
 From these equations partial derivatives of error with respect to time, azimuth, and elevation can be derived.
 These derivatives are used to converge on a solution in the newton-raphson solver.
+
+
+
+
+Example usage
+
+./solver
+
+CONDITIONS
+speed: 300 m/s
+drag: 0.001
+gravity: -9.8 m/s/s
+target: (100, 100, 100) m
+velocity: (0, 0, 0) m/s
+max: 9
+desired error: 0 m
+
+SOLVING
+0: (0.785398, 0.61548, 0.577517), error: 1.63397
+1: (0.785398, 0.623267, 0.580698), error: 0.00912742
+2: (0.785398, 0.623225, 0.580716), error: 1.32145e-05
+3: (0.785398, 0.623225, 0.580716), error: 1.07896e-05
+4: (0.785398, 0.623225, 0.580716), error: 1.52588e-05
+5: (0.785398, 0.623225, 0.580716), error: 1.32145e-05
+6: (0.785398, 0.623225, 0.580716), error: 1.07896e-05
+7: (0.785398, 0.623225, 0.580716), error: 1.52588e-05
+8: (0.785398, 0.623225, 0.580716), error: 1.32145e-05
+9: (0.785398, 0.623225, 0.580716), error: 1.07896e-05
+
+SOLUTION
+azimuth: 0.785398 rads
+elevation: 0.623225 rads
+time: 0.580716 s
+error: 1.07896e-05 m
+
+

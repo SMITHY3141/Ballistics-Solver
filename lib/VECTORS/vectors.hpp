@@ -64,7 +64,7 @@ Vector<N> operator/(float value, const Vector<N> &self);
 // .cpp
 template<int N>
 std::ostream& operator<<(std::ostream& os, const Vector<N> &v) {
-    os << "(";
+    os << '(';
     for (int i = 0; i < N; i++) {
         os << v[i];
         if (i == N - 1) {
@@ -181,12 +181,12 @@ Vector<N>& Vector<N>::operator/=(float value) {
 
 template<int N>
 float& Vector<N>::operator[](size_t index) {
-    return this->data[index];
+    return data[index];
 }
 
 template<int N>
 const float& Vector<N>::operator[](size_t index) const {
-    return this->data[index];
+    return data[index];
 }
 /*
 Vector Vector::fromPolar(float magnitude, float angle) {

@@ -2,8 +2,6 @@
 
 #include "parser.hpp"
 #include "ballistics.hpp"
-#include <VECTORS/vectors.hpp>
-#include <VECTORS/matrices.hpp>
 #include <iostream>
 
 int main(int argc, char **argv) {
@@ -16,9 +14,9 @@ int main(int argc, char **argv) {
     std::cout << '\n' << conditions << '\n' << '\n';
 
 
+    // solve for firing solution
     blstc::Solution solution = blstc::solve(conditions);
-
-    std::cout << '\n' << solution << '\n';
+    std::cout << '\n' << solution << '\n' << std::endl;
 
 }
 

@@ -8,7 +8,7 @@
 #define SAVE_COMMENT "//"
 
 
-// TODO parse the command args for the save location (if none given use defualt)
+// parse the command line args for the save location (if none given use defualt)
 char* find_save(int argc, char **argv) {
     if (!argc) {
         return SAVE_DEFAULT;
@@ -18,7 +18,7 @@ char* find_save(int argc, char **argv) {
 }
 
 
-// in-place, only splits on the first instance of //
+// in-place, strips comments from a line
 void strip_comment(std::string &string) {
     size_t pos = string.find(SAVE_COMMENT);
     if (pos == std::string::npos) {
@@ -29,11 +29,12 @@ void strip_comment(std::string &string) {
 }
 
 
-// std::vector is dynamic .push_back(), .pop_back(), .resize()
-std::array<std::string, 2> strip_past_colon(const std::string& line) {
+// splits a string in two at the first instance of a colon
+// "key: value"
+std::array<std::string, 2> split(const std::string& line, char letter) {
     std::array<std::string, 2> delimited; // "" in each string
     
-    size_t pos = line.find(":");
+    size_t pos = line.find(letter);
     if (pos == std::string::npos) {
         delimited[0] = line;
         return delimited;
@@ -49,14 +50,11 @@ std::array<std::string, 2> strip_past_colon(const std::string& line) {
 
 }
 
-
+// parses a save file into a blstc::Conditions struct.
 blstc::Conditions parse_params(char *save_path) {
     blstc::Conditions conditions;
     
-    // signature of void (*)(const std::string&)
-    // [] is a capture clause, it reaches into the surrounding scope to pull variables in
-    // [&] is used in the lambda, it reaches into the surrounding scope so we can use them by reference
-    // [=] to capture by value, so capturing the entire scope by value would be expensive
+    // how to process the value of each key into the struct
     std::unordered_map<std::string, std::function<void(const std::string&)>> setters = {
         {"speed", [&](const std::string &v){conditions.speed = std::stof(v);}},
         {"drag", [&](const std::string &v){conditions.drag = std::stof(v);}},
@@ -71,13 +69,11 @@ blstc::Conditions parse_params(char *save_path) {
         {"gravity", [&](const std::string &v){conditions.gravity = std::stof(v);}}
     };
 
-    //ifstream as in input fstream, there's also ofstream
     std::ifstream file(save_path);
-
     std::string line;
     while (std::getline(file, line)) {
         strip_comment(line);
-        std::array<std::string, 2> key_value = strip_past_colon(line);
+        std::array<std::string, 2> key_value = split(line, ':');
         std::string key = key_value[0];
         std::string val = key_value[1];
 
@@ -85,11 +81,6 @@ blstc::Conditions parse_params(char *save_path) {
             continue; // if key empty (most likely line was empty)
         }
 
-        // .find() returns an iterator
-        // say int nums[] = {1,2}; int *p = nums;
-        // iterator in cpp is it's way of abstracting this p ptr
-        // nums.begin() is an iterator, deref to get 1, it++
-        // in .find() case, the iterator is of the entire map;
         auto it = setters.find(key); // iterator of key value pair
         if (it != setters.end()) {
             it->second(val);

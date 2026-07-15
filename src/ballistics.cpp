@@ -11,27 +11,29 @@
 namespace blstc {
     std::ostream& operator<<(std::ostream& os, const Solution& s) {
         os << "SOLUTION" << '\n'
-           << "azimuth: " << s.azimuth << '\n'
-           << "elevation: "  << s.elevation  << '\n'
-           << "time: " << s.time << '\n'
-           << "error: " << s.error;
+           << "azimuth: " << s.azimuth << " rads" << '\n'
+           << "elevation: "  << s.elevation << " rads" << '\n'
+           << "time: " << s.time << " s" << '\n'
+           << "error: " << s.error << " m";
 
         return os; // so we can chain together std::cout << inputs << more_inputs
     }
 
     std::ostream& operator<<(std::ostream& os, const Conditions& c) {
         os << "CONDITIONS" << '\n'
-           << "speed: " << c.speed << '\n'
-           << "drag: "  << c.drag  << '\n'
-           << "gravity: " << c.gravity << '\n'
-           << "target: (" << c.x << ", " << c.y << ", " << c.z << ")\n"
-           << "velocity: (" << c.vx << ", " << c.vy << ", " << c.vz << ")\n"
+           << "speed: " << c.speed << " m/s" << '\n'
+           << "drag: "  << c.drag << '\n'
+           << "gravity: " << c.gravity << " m/s/s" << '\n'
+           << "target: (" << c.x << ", " << c.y << ", " << c.z << ") m\n"
+           << "velocity: (" << c.vx << ", " << c.vy << ", " << c.vz << ") m/s\n"
            << "max: " << c.max << '\n'
-           << "desired error: " << c.desired;
+           << "desired error: " << c.desired << " m";
 
         return os;
     }
 
+    // just makes a call to the root solver
+    // has to process 
     Solution solve(const Conditions &c) {
 
         float azimuth = std::atan2(c.y, c.x); // initial guesses
@@ -58,7 +60,44 @@ namespace blstc {
 
     }
 
+    // Projectile position at a given launch and time after launch.
+    Vector<3> position(const Vector<3> &vars, const Conditions &c) {
+        // was having some precision issues, promoting to double fixed it
+        double g = c.gravity;
+        double d = c.drag;
+        double v = c.speed;
 
+        float a = vars[0];
+        float p = vars[1];
+        float t = vars[2];
+
+        double exp = std::exp(-d * t);
+
+        float x = v * std::cos(a) * std::cos(p) * (1 - exp) / d;
+        float y = v * std::sin(a) * std::cos(p) * (1 - exp) / d;
+        float z = g * (exp/d + t - 1/d)/d + v * std::sin(p) * (1 - exp) / d;
+        
+        Vector<3> position{x, y, z};
+
+        return position;
+
+    }
+
+    // Difference in predicted projectile position and extrapolated
+    // target position.
+    Vector<3> error(const Vector<3> &vars, const Conditions &c) {
+        Vector<3> pos = position(vars, c);
+
+        Vector<3> target{c.x, c.y, c.z};
+        Vector<3> vel{c.vx, c.vy, c.vz};
+        Vector<3> extrapolated = target + vel * vars[2];
+
+        return pos - extrapolated;
+    
+    }
+
+    // Partial derivatives of the error terms wrt azimuth angle, elevation
+    // angle, and time after launch.
     Matrix<3, 3> jacobian(const Vector<3> &state, const Conditions &c) {
         float g = c.gravity;
         float d = c.drag;
@@ -80,47 +119,19 @@ namespace blstc {
 
         float z_a = 0;
         float z_p = v * std::cos(p) * (1 - exp) / d;
-        float z_t = g * (1 - exp) + v * std::sin(p) * exp - c.vz;
+        float z_t = g * (1 - exp) / d + v * std::sin(p) * exp - c.vz;
 
         Matrix<3, 3> jacobian{{{x_a, x_p, x_t}, {y_a, y_p, y_t}, {z_a, z_p, z_t}}};
 
         return jacobian;
     }
 
-    // ppredicted rojectile position take target position
-    Vector<3> error(const Vector<3> &vars, const Conditions &c) {
-        float g = c.gravity;
-        float d = c.drag;
-        float v = c.speed;
-
-        float a = vars[0];
-        float p = vars[1];
-        float t = vars[2];
-
-        float exp = std::exp(-d * t);
-
-        float v_x = v * std::cos(a) * std::cos(p);
-        float v_y = v * std::sin(a) * std::cos(p);
-        float v_z = v * std::sin(p);
-
-        float x = v_x * (1 - exp) / d;
-        float y = v_y * (1 - exp) / d;
-        float z = (g * (exp/d + t - 1/d) + v_z * (1 - exp)) / d ;
-
-        Vector<3> position{x, y, z};
-
-        Vector<3> target{c.x, c.y, c.z};
-        Vector<3> vel{c.vx, c.vy, c.vz};
-        Vector<3> extrapolated = target + vel * vars[2];
-
-        return position - extrapolated;
-
-        
-    }
-
+    // simple guess of time to hit based on initial conditions
+    // assumes constant target velocity, derived from error() equations
     float time_to_hit(float p, const Conditions &c) {
-        float distance = std::sqrt(c.x * c.x + c.y * c.y);
-        float log = std::log(1 - distance * c.drag / c.speed / std::cos(p));
+        double distance = std::sqrt(c.x * c.x + c.y * c.y);
+        double log = std::log(1 - distance * c.drag / c.speed / std::cos(p));
         return - log / c.drag;
+
     }
 }
